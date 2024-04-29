@@ -25,10 +25,16 @@ $(document).ready(() => {
             success: dados => {
                 $('#numeroVendas').html(dados.numeroVendas)
                 $('#totalVendas').html(dados.totalVendas)
+                $('#clientesAtivos').html(dados.clientesAtivos)
+                $('#clientesInativos').html(dados.clientesInativos)
+                $('#totalReclamantes').html(dados.totalReclamantes)
+                $('#totalFeliz').html(dados.totalFeliz)
+                $('#totalSugestoes').html(dados.totalSugestoes)
+                $('#totalPerdas').html(dados.totalPerdas)
             },
             error: erro => console.log(error)
         })
-//        console.log();
+
     })
 
 })

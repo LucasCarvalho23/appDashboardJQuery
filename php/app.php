@@ -6,6 +6,12 @@
         public $data_fim;
         public $numeroVendas;
         public $totalVendas;
+        public $clientesAtivos;
+        public $clientesInativos;
+        public $totalReclamantes;
+        public $totalFeliz;
+        public $totalSugestoes;
+        public $totalPerdas;
 
         public function __get($attr) {
             return $this->$attr;
@@ -76,6 +82,56 @@
             return $stmt->fetch(PDO::FETCH_OBJ)->total_vendas; 
         }
 
+        public function getClientesAtivos() {
+            $query = 'select COUNT(*) as clientes_ativos from tb_clientes where cliente_ativo = 1';
+            $stmt = $this->conexao->prepare($query);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_OBJ)->clientes_ativos; 
+        }
+
+        public function getClientesInativos() {
+            $query = 'select COUNT(*) as clientes_inativos from tb_clientes where cliente_ativo = 0';
+            $stmt = $this->conexao->prepare($query);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_OBJ)->clientes_inativos; 
+        }
+
+        public function getTotalReclamantes() {
+            $query = 'select COUNT(*) as total_reclamantes from tb_contatos where tipo_contato = 1';
+            $stmt = $this->conexao->prepare($query);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_OBJ)->total_reclamantes; 
+        }
+
+        public function getTotalFeliz() {
+            $query = 'select COUNT(*) as total_feliz from tb_contatos where tipo_contato = 2';
+            $stmt = $this->conexao->prepare($query);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_OBJ)->total_feliz; 
+        }
+        
+        public function getTotalSugestoes() {
+            $query = 'select COUNT(*) as total_sugestoes from tb_contatos where tipo_contato = 3';
+            $stmt = $this->conexao->prepare($query);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_OBJ)->total_sugestoes; 
+        }
+
+        public function getTotalPerdas() {
+            $query = 'select SUM(total) as total_perdas from tb_despesas where data_despesa between :data_inicio and :data_fim';
+            $stmt = $this->conexao->prepare($query);
+            $stmt->bindValue(':data_inicio',$this->dashboard->__get('data_inicio'));
+            $stmt->bindValue(':data_fim',$this->dashboard->__get('data_fim'));
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_OBJ)->total_perdas; 
+        }
+
     }
 
 
@@ -94,6 +150,13 @@
 
     $dashboard->__set('numeroVendas', $database->getNumeroVendas());
     $dashboard->__set('totalVendas', $database->getTotalVendas());
+    $dashboard->__set('clientesAtivos', $database->getClientesAtivos());
+    $dashboard->__set('clientesInativos', $database->getClientesInativos());
+    $dashboard->__set('totalReclamantes', $database->getTotalReclamantes());
+    $dashboard->__set('totalFeliz', $database->getTotalFeliz());
+    $dashboard->__set('totalSugestoes', $database->getTotalSugestoes());
+    $dashboard->__set('totalPerdas', $database->getTotalPerdas());
+
 
     echo json_encode($dashboard);
 
